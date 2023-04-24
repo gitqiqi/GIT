@@ -1,5 +1,6 @@
 import requests
 import csv
+import time
 
 def Text (headers,urls,num):
     key={
@@ -17,7 +18,7 @@ def Text (headers,urls,num):
 if __name__=="__main__":
     headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0"}
     urls = "https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry"
-    num = 200
+    num = 1000
 
     file = open(r"data.csv", "w", newline='', encoding='utf-8')  # 建立一个文件
     writer = csv.writer(file)  # 以表格的形式来写这个文件
@@ -26,6 +27,8 @@ if __name__=="__main__":
     writer.writerow(lst[1].keys())
     for i in range(num):
         writer.writerow(lst[i].values())
+        if (i%10 == 0):
+            time.sleep((0.1))
     file.close()
 
 
