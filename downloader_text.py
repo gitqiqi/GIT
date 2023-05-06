@@ -1,35 +1,31 @@
 import requests
 import csv
-import time
+import pandas as pd
+
 
 def Text (headers,urls,num):
-    key={
+    key = {
         "gameNo": 85,
         "provinceId": 0,
+        "pageSize": 30,
         "isVerify": 1,
-        "termLimits": num
+        "pageNo": num
+        # "termLimits": num,
     }
-    response=requests.get(url=urls,headers=headers,timeout=1, params=key)
+    response = requests.get(url=urls, headers=headers, timeout=1, params=key)
     info = response.json()
-    value=info['value']
-    lst=value['list']
+    value = info['value']
+    lst = pd.DataFrame(value['list'])
     return lst
 
-if __name__=="__main__":
-    headers = {"user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:70.0) Gecko/20100101 Firefox/70.0"}
-    urls = "https://webapi.sporttery.cn/gateway/lottery/getHistoryPageListV1.qry"
-    num = 1000
 
-    file = open(r"data.csv", "w", newline='', encoding='utf-8')  # 建立一个文件
-    writer = csv.writer(file)  # 以表格的形式来写这个文件
-
-    lst = Text(headers, urls, num)
-    writer.writerow(lst[1].keys())
-    for i in range(num):
-        writer.writerow(lst[i].values())
-        if (i%10 == 0):
-            time.sleep((0.1))
-    file.close()
+def downloader_data(df1,num,headers,urls):
+    for i in range(2, num):
+        lst = Text(headers, urls, i)
+        df1 = pd.concat([df1, lst.loc[1:,:]]).fillna(0)
+    # print('df1', df1)
+    df1.to_csv(r'data/data.csv')
+# my_sql.execute_sql(df1)
 
 
 #lotteryDrawNum 期号
